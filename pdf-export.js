@@ -798,6 +798,7 @@
     paintFooters(doc, ctx);
 
     doc.save(ctx.filename);
+    if (typeof gtag === 'function') gtag('event', 'pdf_exportado', { archivo: ctx.filename, productos: ctx.products.length });
     return ctx.filename;
   }
 

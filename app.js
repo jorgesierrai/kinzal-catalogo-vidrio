@@ -6,6 +6,10 @@
   'use strict';
   const productos = window.PRODUCTOS || [];
 
+  function track(event, params) {
+    if (typeof gtag === 'function') gtag('event', event, params || {});
+  }
+
   // ----- Familias (descripción comercial + cuándo elegir) -----
   const FAMILIAS = [
     { name: 'Cool-Lite ST',       blurb: 'Vidrios monolíticos con capa de control solar magnetrónica. Catorce variantes en tres colores (neutro, gris, verde) y cinco niveles de rechazo solar.', when: 'Fachadas comerciales monolíticas con sol fuerte donde el DGU no es factible.' },
@@ -195,6 +199,7 @@
     $$('.need-card').forEach(card => {
       card.addEventListener('click', () => {
         const needs = JSON.parse(card.dataset.needs);
+        track('necesidad_seleccionada', { necesidad: card.querySelector('h3')?.textContent?.trim() });
         // Apply as familia filter
         state.familias.clear();
         needs.forEach(f => state.familias.add(f));
@@ -271,9 +276,14 @@
         { value: 'dgu',       label: 'Disponible en DGU' },
       ], 'cap');
 
+    let searchTimer;
     $('#search')?.addEventListener('input', e => {
       state.search = e.target.value.trim();
       renderBrowser();
+      clearTimeout(searchTimer);
+      if (state.search.length >= 3) {
+        searchTimer = setTimeout(() => track('busqueda_realizada', { termino: state.search }), 800);
+      }
     });
     $('#sort')?.addEventListener('change', e => {
       state.sortBy = e.target.value;
@@ -312,7 +322,8 @@
         const k = e.target.dataset.key;
         const v = e.target.value;
         const set = state[k];
-        if (e.target.checked) set.add(v); else set.delete(v);
+        if (e.target.checked) { set.add(v); track('filtro_aplicado', { tipo: k, valor: v }); }
+        else set.delete(v);
         renderBrowser();
         scrollToCatalogAnchor();
       });
@@ -526,6 +537,7 @@
 
   function openCompareModal() {
     if (state.compare.length < 2) return;
+    track('comparador_abierto', { productos: state.compare.map(p => p.name).join(' vs '), cantidad: state.compare.length });
     const modal = $('#compare-modal');
     const body  = $('#compare-body');
     const cols = state.compare.length;
@@ -584,6 +596,7 @@
     });
   }
   function openDrawer(p) {
+    track('producto_visto', { producto: p.name, familia: p.familia });
     const d = $('#drawer'); const b = $('#drawer-back'); const body = $('#drawer-body');
     body.innerHTML = `
       <div class="drawer-pitch">${p.pitch || p.desc}</div>
@@ -730,9 +743,14 @@
       a.addEventListener('click', e => {
         const id = a.getAttribute('href').slice(1);
         if (!id) return;
+        if (id === 'cotizar') track('cotizar_click', { origen: a.closest('section')?.id || 'nav' });
         const el = document.getElementById(id);
         if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       });
+    });
+    // CTA links directos (mailto, tel, whatsapp) en la sección cotizar
+    document.querySelectorAll('#cotizar a[href^="mailto"], #cotizar a[href^="tel"], #cotizar a[href*="wa.me"]').forEach(a => {
+      a.addEventListener('click', () => track('cotizar_click', { origen: 'cta_final', canal: a.href.split(':')[0] }));
     });
   }
 
