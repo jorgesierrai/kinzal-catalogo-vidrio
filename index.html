@@ -79,6 +79,9 @@
       <a href="#cotizar">Cotizar</a>
     </nav>
     <div class="topbar-actions">
+      <button class="mobile-nav-btn" id="mobile-nav-btn" aria-label="Abrir menú" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <button class="btn btn-ghost btn-sm" data-action="export" title="Exportar catálogo a PDF">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
         Exportar PDF
@@ -185,8 +188,16 @@ Sistema de <em>HP Templados</em>. Nosotros instalamos.
     </div>
 
     <div class="browser">
+      <button class="filters-toggle" id="filters-toggle" type="button" aria-expanded="false" aria-controls="filters-panel">
+        <span class="ft-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          Filtros
+          <span class="ft-count" id="filters-count"></span>
+        </span>
+        <svg class="ft-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
       <!-- FILTERS RAIL -->
-      <aside class="filters" aria-label="Filtros del catálogo">
+      <aside class="filters" id="filters-panel" aria-label="Filtros del catálogo">
         <div>
           <button id="reset-filters" class="filter-reset" type="button">— Limpiar filtros —</button>
         </div>
@@ -325,7 +336,7 @@ Los vidrios Saint Gobain de HP Templados no.</h2>
       </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px;">
+    <div class="sistema-stats">
       <div>
         <div class="k-number" style="font-size: 44px; color: #fff;">1<em style="font-style: normal; color: var(--violet);">.</em></div>
         <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-top: 12px;">Un solo contrato</div>
@@ -578,6 +589,30 @@ Los vidrios Saint Gobain de HP Templados no.</h2>
   <div class="pop-foot">
     <span id="mp-scale"></span>
     <a href="#familias" id="mp-link">Glosario completo ↗</a>
+  </div>
+</div>
+
+<!-- Mobile navigation overlay -->
+<div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+  <div class="mobile-nav-bg" id="mobile-nav-bg"></div>
+  <div class="mobile-nav-panel">
+    <div class="mobile-nav-head">
+      <span>MENÚ</span>
+      <button id="mobile-nav-close" aria-label="Cerrar menú">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 6-12 12M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <nav class="mobile-nav-links">
+      <a href="#necesidades" class="mobile-nav-link">Necesidades</a>
+      <a href="#catalogo" class="mobile-nav-link">Catálogo · 61 vidrios</a>
+      <a href="#familias" class="mobile-nav-link">Familias</a>
+      <a href="#sistema" class="mobile-nav-link">Sistema HP Templados</a>
+      <a href="#cotizar" class="mobile-nav-link">Cotizar</a>
+    </nav>
+    <div class="mobile-nav-footer">
+      <a class="btn btn-primary" href="mailto:jorge@kinzal.ai?subject=Cotizaci%C3%B3n%20HP%20Templados%20%C3%97%20Saint-Gobain">Cotizar por email</a>
+      <a class="btn btn-outline" href="https://wa.me/523331188097" target="_blank" rel="noopener">WhatsApp · 33 3118 8097</a>
+    </div>
   </div>
 </div>
 

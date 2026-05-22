@@ -179,6 +179,8 @@
     setupSmoothScroll();
     setupMetricPopover();
     setupModalBackdropClicks();
+    setupMobileNav();
+    setupFiltersToggle();
   }
 
   // ----- Need cards -----
@@ -377,6 +379,7 @@
     const root = $('#product-list');
     if (!root) return;
     const list = sortList(filtered());
+    updateFiltersToggleBadge();
 
     // Results bar
     $('#result-count').textContent = list.length;
@@ -431,11 +434,13 @@
           <div class="meta">${dot}<span>${p.color || '—'}</span><span>·</span><span>${p.configuracion || '—'}</span></div>
         </div>
         <div class="pr-pitch">${p.pitch || p.desc || ''}</div>
-        <div class="pr-metric"><div class="v">${pct(p.tl)}</div><div class="l" data-metric="tl">TL</div></div>
-        <div class="pr-metric"><div class="v">${fmt(p.shgc)}</div><div class="l" data-metric="shgc">SHGC</div></div>
-        <div class="pr-metric"><div class="v">${p.u || '—'}</div><div class="l" data-metric="u">U-Value</div></div>
-        <div class="pr-metric"><div class="v">${fmt(p.sel)}</div><div class="l" data-metric="sel">Sel.</div></div>
-        <div class="pr-metric"><div class="v">${pct(p.ref_ext)}</div><div class="l" data-metric="ref">Ref Ext</div></div>
+        <div class="pr-metrics">
+          <div class="pr-metric"><div class="v">${pct(p.tl)}</div><div class="l" data-metric="tl">TL</div></div>
+          <div class="pr-metric"><div class="v">${fmt(p.shgc)}</div><div class="l" data-metric="shgc">SHGC</div></div>
+          <div class="pr-metric"><div class="v">${p.u || '—'}</div><div class="l" data-metric="u">U-Value</div></div>
+          <div class="pr-metric"><div class="v">${fmt(p.sel)}</div><div class="l" data-metric="sel">Sel.</div></div>
+          <div class="pr-metric"><div class="v">${pct(p.ref_ext)}</div><div class="l" data-metric="ref">Ref Ext</div></div>
+        </div>
         <div class="pr-actions">
           <button class="icon-btn ${inCompare ? 'is-active' : ''}" data-action="compare" title="Comparar">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h6"/></svg>
@@ -856,6 +861,56 @@
         }
       });
     });
+  }
+
+  // ----- Mobile navigation -----
+  function setupMobileNav() {
+    const btn = $('#mobile-nav-btn');
+    const nav = $('#mobile-nav');
+    const bg  = $('#mobile-nav-bg');
+    const closeBtn = $('#mobile-nav-close');
+    if (!btn || !nav) return;
+
+    function openNav() {
+      nav.classList.add('is-open');
+      nav.removeAttribute('aria-hidden');
+      btn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeNav() {
+      nav.classList.remove('is-open');
+      nav.setAttribute('aria-hidden', 'true');
+      btn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    btn.addEventListener('click', openNav);
+    bg?.addEventListener('click', closeNav);
+    closeBtn?.addEventListener('click', closeNav);
+    $$('.mobile-nav-link, .mobile-nav-footer .btn').forEach(a => a.addEventListener('click', closeNav));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && nav.classList.contains('is-open')) closeNav(); });
+  }
+
+  // ----- Filters toggle (mobile) -----
+  function setupFiltersToggle() {
+    const btn   = $('#filters-toggle');
+    const panel = $('#filters-panel');
+    if (!btn || !panel) return;
+
+    btn.addEventListener('click', () => {
+      const isOpen = panel.classList.toggle('is-open');
+      btn.classList.toggle('is-open', isOpen);
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  }
+
+  function updateFiltersToggleBadge() {
+    const badge = $('#filters-count');
+    if (!badge) return;
+    const count = state.familias.size + state.colores.size + state.segmento.size + state.cap.size;
+    badge.textContent = count;
+    if (count > 0) badge.classList.add('has-filters');
+    else badge.classList.remove('has-filters');
   }
 
   // Boot
